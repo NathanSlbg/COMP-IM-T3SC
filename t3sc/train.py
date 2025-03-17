@@ -14,30 +14,28 @@ from t3sc.callbacks import Backtracking
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-
 def train(cfg):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Device in use : {device}")
+    device = torch.device("cpu")  # ✅ Force CPU usage
+    logger.info("Using CPU for training.")
 
     # Fix seed for reproducibility
     logger.info(f"Using random seed {cfg.seed}")
-    pl.seed_everything(cfg.seed)
+    pl.seed_everything(cfg.seed, workers=True)
 
     # Load datamodule
     datamodule = DataModule(**cfg.data.params)
 
     # Logger
-    tb_logger = pl.loggers.TensorBoardLogger(
-        save_dir="tb", name="", version=""
-    )
+    tb_logger = pl.loggers.TensorBoardLogger(save_dir="tb", name="", version="")
 
     # Callbacks
     callbacks = [
         cb.ModelCheckpoint(**cfg.checkpoint),
         cb.ModelCheckpoint(**cfg.checkpoint_best),
-        cb.LearningRateMonitor(),
-        cb.ProgressBar(),
+        cb.LearningRateMonitor(logging_interval="epoch"),
+        cb.RichProgressBar(),
     ]
+
     try:
         logger.info("Loading backtracking config")
         callbacks.append(Backtracking(**cfg.model.backtracking))
@@ -47,17 +45,15 @@ def train(cfg):
 
     # Instantiate model
     model_class = models.__dict__[cfg.model.class_name]
-    model = model_class(**cfg.model.params).to(device)
+    model = model_class(**cfg.model.params).to(device)  # ✅ Ensure model is on CPU
 
-    tb_logger = pl.loggers.TensorBoardLogger(
-        save_dir="tb", name="", version=""
-    )
-
-    # Instantiate trainer
+    # Instantiate trainer (Forcing CPU usage)
     trainer = pl.Trainer(
+        accelerator="cpu", 
+        devices=1,  
         callbacks=callbacks,
         logger=tb_logger,
-        progress_bar_refresh_rate=0,
+        enable_progress_bar=True,
         **cfg.trainer.params,
     )
 
@@ -70,8 +66,10 @@ def train(cfg):
     # Load best checkpoint
     filename_best = os.listdir("best")[0]
     path_best = os.path.join("best", filename_best)
-    logger.info(f"Loading best model for testing : {path_best}")
-    model.load_state_dict(torch.load(path_best)["state_dict"])
+    logger.info(f"Loading best model for testing: {path_best}")
 
+    model.load_state_dict(torch.load(path_best, map_location="cpu")["state_dict"])  # ✅ Ensure CPU loading
+
+    # Test the model
     tester = Tester(**cfg.test)
     tester.eval(model, datamodule=datamodule)
