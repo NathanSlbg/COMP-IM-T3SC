@@ -1,5 +1,5 @@
 name: "dcmall"
-bs: 16
+bs: 4
 ssl: 0
 n_ssl: 16
 split: 0

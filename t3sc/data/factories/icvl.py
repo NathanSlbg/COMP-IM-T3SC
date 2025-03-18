@@ -4,6 +4,7 @@ import subprocess
 import torch
 import h5py
 import numpy as np
+from datasets import load_dataset  # Import Hugging Face datasets library
 
 from t3sc.data.normalizers import GlobalMinMax
 from .base_factory import DatasetFactory
@@ -36,35 +37,35 @@ class ICVL(DatasetFactory):
 
     @classmethod
     def download(cls, path_data):
-        BASE_URL = "http://icvl.cs.bgu.ac.il/img/hs_pub/"
+        # Hugging Face dataset URL
+        DATASET_URL = "danaroth/icvl"
         path_dataset = os.path.join(path_data, cls.NAME)
         path_raw = os.path.join(path_dataset, "raw")
         path_dl_complete = os.path.join(path_raw, ".download_complete")
+
         if os.path.exists(path_dl_complete):
             logger.info(f"Dataset downloaded")
             return
-        logger.info(f"{path_dl_complete!r} not found, checking filesizes ..")
+
+        logger.info(f"{path_dl_complete!r} not found, downloading from Hugging Face..")
         os.makedirs(path_raw, exist_ok=True)
 
-        icvl_all = icvl_train + icvl_val + icvl_test
-        icvl_all = [f"{fn}.mat" for fn in icvl_all]
-        for i, filename in enumerate(icvl_all):
-            target = os.path.join(path_raw, filename)
-            url = os.path.join(BASE_URL, filename)
-            logger.info(
-                f"Checking image ({i + 1}/{len(icvl_all)}) : {filename}"
-            )
-            if os.path.exists(target) and check_filesize(target, url):
-                logger.info(f"OK")
-                continue
-            logger.info(f"Downloading..")
-            subprocess.check_call(
-                f"wget {url} -O {target}",
-                shell=True,
-                stdout=subprocess.DEVNULL,
-            )
+        # Load the dataset from Hugging Face
+        dataset = load_dataset(DATASET_URL)
+
+        # Save each file to the raw directory
+        for split_name, split_data in dataset.items():
+            for idx, example in enumerate(split_data):
+                filename = f"{split_name}_{idx}.mat"
+                target = os.path.join(path_raw, filename)
+                logger.info(f"Saving {filename} to {target}")
+
+                # Convert and save the data as a .mat file
+                with h5py.File(target, "w") as f:
+                    f.create_dataset("rad", data=example["rad"])
 
         touch(path_dl_complete)
+        logger.info(f"Dataset downloaded and saved to {path_raw}")
 
     def preprocess(self):
         path_source = os.path.join(self.path_data, self.NAME, "raw")
