@@ -57,7 +57,7 @@ def train(cfg):
     trainer = pl.Trainer(
         callbacks=callbacks,
         logger=tb_logger,
-        progress_bar_refresh_rate=0,
+        enable_progress_bar=True,
         **cfg.trainer.params,
     )
 

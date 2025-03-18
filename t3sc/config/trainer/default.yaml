@@ -1,12 +1,13 @@
 logging_level: INFO
 params:
-  gpus: 1
+  accelerator: "gpu"  # Use GPU (or "cpu" for CPU)
+  devices: 1          # Use 1 GPU (or 1 CPU core)
   max_epochs: 60
   limit_val_batches: 1
   log_every_n_steps: 5
   check_val_every_n_epoch: 1
-  flush_logs_every_n_steps: 10
-  weights_summary: null
+  # weights_summary: null  # Deprecated in newer versions, use `enable_model_summary` instead
+  enable_model_summary: False
   deterministic: False
   benchmark: True
   profiler: "simple"
