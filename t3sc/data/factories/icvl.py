@@ -1,14 +1,13 @@
 import logging
 import os
-import subprocess
 import torch
 import h5py
 import numpy as np
-from datasets import load_dataset  # Import Hugging Face datasets library
-
+import re
+from datasets import load_dataset
 from t3sc.data.normalizers import GlobalMinMax
 from .base_factory import DatasetFactory
-from .utils import check_filesize, touch
+from .utils import touch
 from t3sc.data.splits import (
     icvl_train,
     icvl_val,
@@ -19,7 +18,6 @@ from t3sc.data.splits import (
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
 
 class ICVL(DatasetFactory):
     NAME = "ICVL"
@@ -34,38 +32,39 @@ class ICVL(DatasetFactory):
         self.f_train = icvl_train
         self.f_val = icvl_val
         self.f_test = icvl_test
+        
+        # Load dataset from Hugging Face
+        self.dataset = load_dataset("danaroth/icvl")
+        
+        # Extract filenames from dataset
+        self.file_names = self._extract_filenames()
+
+    def _extract_filenames(self):
+        """Extracts and cleans filenames from the dataset."""
+        file_names = []
+        for i in range(len(self.dataset["train"])):
+            image_path = self.dataset["train"][i]["image"].filename
+            file_name = os.path.splitext(os.path.basename(image_path))[0]
+            clean_name = re.sub(r"-200x215$", "", file_name)  # Remove size suffix
+            file_names.append(clean_name)
+        return file_names
 
     @classmethod
     def download(cls, path_data):
-        # Hugging Face dataset URL
-        DATASET_URL = "danaroth/icvl"
+        """Simulates dataset download using Hugging Face."""
         path_dataset = os.path.join(path_data, cls.NAME)
         path_raw = os.path.join(path_dataset, "raw")
         path_dl_complete = os.path.join(path_raw, ".download_complete")
-
+        
         if os.path.exists(path_dl_complete):
-            logger.info(f"Dataset downloaded")
+            logger.info("Dataset already downloaded")
             return
-
-        logger.info(f"{path_dl_complete!r} not found, downloading from Hugging Face..")
+        
+        logger.info("Downloading dataset from Hugging Face")
+        load_dataset("danaroth/icvl")
         os.makedirs(path_raw, exist_ok=True)
-
-        # Load the dataset from Hugging Face
-        dataset = load_dataset(DATASET_URL)
-
-        # Save each file to the raw directory
-        for split_name, split_data in dataset.items():
-            for idx, example in enumerate(split_data):
-                filename = f"{split_name}_{idx}.mat"
-                target = os.path.join(path_raw, filename)
-                logger.info(f"Saving {filename} to {target}")
-
-                # Convert and save the data as a .mat file
-                with h5py.File(target, "w") as f:
-                    f.create_dataset("rad", data=example["rad"])
-
         touch(path_dl_complete)
-        logger.info(f"Dataset downloaded and saved to {path_raw}")
+        logger.info("Dataset download complete")
 
     def preprocess(self):
         path_source = os.path.join(self.path_data, self.NAME, "raw")
@@ -78,23 +77,19 @@ class ICVL(DatasetFactory):
 
         normalizer = GlobalMinMax()
         icvl_all = list(set(self.f_train + self.f_test + self.f_val))
-
-        for i, fn in enumerate(icvl_all):
+        
+        for i, fn in enumerate(self.file_names):
             path_out = os.path.join(path_dest, f"{fn}.pth")
             if os.path.exists(path_out):
                 continue
-            logger.info(f"Preprocessing {fn}")
-            path_in = os.path.join(path_source, f"{fn}.mat")
-            with h5py.File(path_in, "r") as f:
-                img = np.array(f["rad"], dtype=np.float32)
+            
+            logger.info(f"Processing {fn}")
+            img = np.array(self.dataset["train"][i]["image"], dtype=np.float32)
             img_torch = torch.tensor(img, dtype=torch.float32)
             img_torch = normalizer.transform(img_torch).clone()
-            logger.info(f"shape : {tuple(img_torch.shape)} ")
-
+            
             torch.save(img_torch, path_out)
-            logger.info(
-                f"Saved normalized image {i + 1}/{len(icvl_all)} "
-                f"to {path_out}"
-            )
+            logger.info(f"Saved image {i + 1}/{len(self.file_names)} to {path_out}")
+        
         touch(path_complete)
-        logger.info(f"Dataset preprocessed")
+        logger.info("Dataset preprocessing complete")
