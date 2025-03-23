@@ -17,9 +17,19 @@ Trainable spectral-spatial sparse coding model(T3SC)is a powerful hybrid approac
 
 Starting with the code implementation from the initial repository, we've tested [some pre-trained model](https://pascal.inrialpes.fr/data2/tbodrito/t3sc/). Moreover, as part of this project, we have focused mainly in explorying the performance of the model with complex noise on the input dataset dcmall. 
 
-## 2. Pre-trained models review
-### 2.1. ICVL dataset
-### 2.2. dcmall dataset
+## 2. Initial repo review
+### 2.1. Testing: ICVL dataset
+### 2.2. Training and testing: dcmall dataset
+There is no pre-trained model for the washington dcmall hyperspectral dataset. Therefore, we've trained two models with Noise Adaptive Sparse Coding (model.beta=1) 
+
+dcmall dataset with band-dependant gaussian noise $\sigma=55$ :
+```
+$ python main.py data=dcmall model.beta=1 noise=uniform noise.params.sigma_max=55
+```
+dcmall dataset with stripes noise :
+```
+$ python main.py data=dcmall model.beta=1 noise=stripes
+```
 
 ## 3. Exploring complex noise on dcmall 
 ### 3.1. Complex noises overview
