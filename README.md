@@ -23,7 +23,7 @@ Starting with the code implementation from the initial repository, we've tested 
 Washington DC Mall is one of the most widely used dataset for HSI denoising and consists of a high-quality image of size 1280 × 307 with 191 bands. We split the image into two sub-images of size 600 × 307 and 480 × 307 for training and one sub-image of size 200 × 200 for testing. 
 There is no pre-trained model for the washington dcmall hyperspectral dataset. Therefore, we've trained two models with Noise Adaptive Sparse Coding (model.beta=1) 
 <img src="figs/dcmall_split.png" alt="Description" width="200">
-![](figs/dcmall_split.png)
+![](figs/dcmall_split.PNG)
 
 dcmall dataset with band-dependant gaussian noise $\sigma=55$ :
 ```
