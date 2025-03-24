@@ -17,10 +17,38 @@ Trainable spectral-spatial sparse coding model(T3SC)is a powerful hybrid approac
 
 Starting with the code implementation from the initial repository, we've tested [some pre-trained model](https://pascal.inrialpes.fr/data2/tbodrito/t3sc/). Moreover, as part of this project, we have focused mainly in explorying the performance of the model with complex noise on the input dataset dcmall. 
 
-## 2. Initial repo review
-### 2.1. Testing: ICVL dataset
-NATHAN 
+## 2. Testing robustness to various types of noise
+### 2.1. ICVL dataset
+ICVL is a hyperspectral image dataset, collected by "Sparse Recovery of Hyperspectral Signal from Natural RGB Images" At this time it contains 200 images and will continue to grow progressively.Images were collected at 1392 $\times$ 1300 spatial resolution over 519 spectral bands.
 
+![](figs/icvl_nachal_0823-1110_out.PNG)
+
+### 2.2 Using the pre-trained models
+
+Some pre-trained models can be found [here](http://pascal.inrialpes.fr/data2/tbodrito/t3sc/).
+
+### 2.3 Testing on various parameters of noise
+
+Here is the command to launch the testing with a pre-trained model on various noises : 
+```
+$ python main.py mode=test data=icvl noise={constant,uniform,correlated,stripes} [+noise-specific params] model.ckpt=path/to/ckpt
+```
+
+**NOTE:** Some noises require to add model.beta=1 and use Noise-adaptative sparse coding
+
+### 2.4 Observations
+
+| Paramètre      | MPSNR (entrée) | MPSNR (sortie) | SSIM (entrée) | SSIM (sortie) |
+|-----------------|----------------|----------------|---------------|---------------|
+| Constant 50     | 15.82 dB       | 41.25 dB       | 0.0536        | 0.9626        |
+| Constant 25     | 21.16 dB       | 44.40 dB       | 0.1606        | 0.9799        |
+| Constant 100    | 10.78 dB       | 38.17 dB       | 0.0159        | 0.9367        |
+| Constant 5      | 34.30 dB       | 51.64 dB       | 0.7677        | 0.9955        |
+| Correlated      | 28.58 dB       | 48.82 dB       | 0.4788        | 0.9913        |
+| Uniform 15      | 15.23 dB       | 40.12 dB       | 0.0847        | 0.9614        |
+| Uniform 55      | 20.01 dB       | 43.82 dB       | 0.1192        | 0.9742        |
+| Uniform 95      | 22.48 dB       | 47.01 dB       | 0.2981        | 0.9833        |
+| Stripes         | 16.81 dB       | 41.81 dB       | 0.2335        | 0.9682        |
 
 ## 3. Exploring band-dependant gaussian noise on dcmall
 ### 3.1. Training: dcmall dataset
