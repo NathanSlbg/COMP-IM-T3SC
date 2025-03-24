@@ -19,10 +19,10 @@ Starting with the code implementation from the initial repository, we've tested 
 
 ## 2. Initial repo review
 ### 2.1. Testing: ICVL dataset
-### 2.2. Training and testing: dcmall dataset
+### 2.2. Training: dcmall dataset
 Washington DC Mall is one of the most widely used dataset for HSI denoising and consists of a high-quality image of size 1280 × 307 with 191 bands. We split the image into two sub-images of size 600 × 307 and 480 × 307 for training and one sub-image of size 200 × 200 for testing. 
 There is no pre-trained model for the washington dcmall hyperspectral dataset. Therefore, we've trained two models with Noise Adaptive Sparse Coding (model.beta=1) 
-<img src="figs/dcmall_split.png" alt="Description" width="200">
+
 ![](figs/dcmall_split.PNG)
 
 dcmall dataset with band-dependant gaussian noise $\sigma=55$ :
@@ -33,6 +33,10 @@ dcmall dataset with stripes noise :
 ```
 $ python main.py data=dcmall model.beta=1 noise=stripes
 ```
+
+The metrics used for 
+### 2.3. Testing: dcmall dataset
+Since we've trained the model with a very noisy gaussian noise of $\sigma=55$, we want to test it using similar input dataset but with lower noise. Here are the inference for band-dependant gaussian noise with different values of $\sigma$.
 
 ## 3. Exploring complex noise on dcmall 
 ### 3.1. Complex noises overview
