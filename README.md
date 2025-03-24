@@ -21,7 +21,7 @@ Starting with the code implementation from the initial repository, we've tested 
 ### 2.1. ICVL dataset
 ICVL is a hyperspectral image dataset, collected by "Sparse Recovery of Hyperspectral Signal from Natural RGB Images" At this time it contains 200 images and will continue to grow progressively.Images were collected at 1392 $\times$ 1300 spatial resolution over 519 spectral bands.
 
-![](figs/nachal_0823-1110_in.PNG)
+![]([figs/nachal_0823-1110_in.png))
 
 ### 2.2 Using the pre-trained models
 
