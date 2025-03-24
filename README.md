@@ -52,6 +52,7 @@ Where $\sigma=x$ can be choosen by the user.
 
 ![](figs/dcmall_metrics.png)
 
+### 3.3. Observation
 It can be observed that for variance extremely lower than $\sigma=55$ (noticeable starting from $\sigma=35$), the MPSNR and MSSIM show that the putput-reconstructed image is even worse quality than the input-noisy image. However, for $\sigma>=55$, the metrics are better. 
 
 Below are input-noisy images and output-reconstructed images for 2 different values of $\sigma$:
