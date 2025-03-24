@@ -39,7 +39,7 @@ During the training, we track some metrics : loss, MSE, and the Mean Peak Signal
 At epoch 11, we got the best trade-off between loss and MPSNR so we kept this checkpoint as our best model.
 
 ### 3.2. Testing: dcmall dataset
-Since we've trained the model with a very noisy gaussian noise of $\sigma=55$, we want to test it using similar input dataset with gaussian noise but with different variance. Here are the inference for band-dependant gaussian noise with different values of $\sigma$. The Mean Peak Signal-to-Noise Ratio (MPSNR) and the Mean Structural Similarity Index Measurement (MSSIM) are two possible metrics used to evaluate the quality of the inference.  
+Since we've trained the model with a Gaussian noise with band-dependent variance $\sigma=55$, we want to test it using similar input dataset with gaussian noise but with different variance. Here are the inference for band-dependant gaussian noise with different values of $\sigma$. The Mean Peak Signal-to-Noise Ratio (MPSNR) and the Mean Structural Similarity Index Measurement (MSSIM) are two possible metrics used to evaluate the quality of the inference.  
 
 To perform some inference using the checkpoint:
 ```
