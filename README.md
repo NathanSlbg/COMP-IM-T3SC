@@ -34,7 +34,7 @@ Here is the command to launch the testing with a pre-trained model on various no
 $ python main.py mode=test data=icvl noise={constant,uniform,correlated,stripes} [+noise-specific params] model.ckpt=path/to/ckpt
 ```
 
-**NOTE:** Some noises require to add model.beta=1 and use Noise-adaptative sparse coding
+**NOTE:** For uniform and stripes noises, better results are obtained with Noise Adaptive Sparse Coding. To enable this feature, use model.beta=1 for both training and testing. **As the pre-trained models use it for uniform and stripes noises, model.beta=1 must be in the command.**
 
 ### 2.4 Observations
 
