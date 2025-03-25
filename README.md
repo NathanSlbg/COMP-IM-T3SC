@@ -83,7 +83,7 @@ Where $\sigma=x$ can be choosen by the user.
 ### 3.3. Observation
 It can be observed that for variance extremely lower than $\sigma=55$ (noticeable starting from $\sigma=35$), the MPSNR and MSSIM show that the putput-reconstructed image is even worse quality than the input-noisy image. However, for $\sigma>=55$, the metrics are better. 
 
-Below are input-noisy images and output-reconstructed images for 2 different values of $\sigma$:
+Below are input-noisy images and output-reconstructed images for 3 different values of $\sigma$:
 
 $\sigma$ |input-noisy | output-reconstructed | MPSNR in | MPSNR out | MSSIM in | MSSIM out
 :---:|:---:|:---:|:---:|:---:|:---:|:---:
@@ -91,6 +91,11 @@ $\sigma$ |input-noisy | output-reconstructed | MPSNR in | MPSNR out | MSSIM in |
 55 |<img src="./figs/dcmall_var55_test_in.png" height="350"/>|<img src="./figs/dcmall_var85_test_out.png" height="350"/> |22.46|38.63|0.74|0.99
 85 |<img src="./figs/dcmall_var55_test_in.png" height="350"/>|<img src="./figs/dcmall_var85_test_out.png" height="350"/> |19.02|37.36 |0.62|0.99
 
+The higher the variance is, the more noisier is the input image. The reconstructed images can establish the folliwing statements:
+
+- Robustness: the model pretrained on a gaussiann band-dependant variance of 55 has learnt how to deal with strong noises. Therefore for variance greater than 55, it has managed to restore well.
+- Overfitting: Due to its performance of handling extremely noisy images, it will over-correct image which noises are weaker.
+  
 ## 4. Conclusion
 ### 4.1. Training time and resource consumption
 ### 4.1. Inference time
