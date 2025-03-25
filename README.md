@@ -87,8 +87,8 @@ Below are input-noisy images and output-reconstructed images for 2 different val
 
 $\sigma$ |input-noisy | output-reconstructed | MPSNR in | MPSNR out | MSSIM in | MSSIM out
 :---:|:---:|:---:|:---:|:---:|:---:|:---:
-15 |<img src="./figs/dcmall_var15_test_in.png" height="400"/>|<img src="./figs/dcmall_var15_test_out.png" height="400"/> |22.46|38.63|0.74|0.99
-55 |<img src="./figs/dcmall_var55_test_in.png" height="400"/>|<img src="./figs/dcmall_var85_test_out.png" height="400"/> |33.32|4.57|0.95|-0.03
+15 |<img src="./figs/dcmall_var15_test_in.png" height="400"/>|<img src="./figs/dcmall_var15_test_out.png" height="400"/> |33.32|4.57|0.95|-0.03
+55 |<img src="./figs/dcmall_var55_test_in.png" height="400"/>|<img src="./figs/dcmall_var85_test_out.png" height="400"/> |22.46|38.63|0.74|0.99
 85 |<img src="./figs/dcmall_var55_test_in.png" height="400"/>|<img src="./figs/dcmall_var85_test_out.png" height="400"/> |19.02|37.36 |0.62|0.99
 
 ## 4. Conclusion
